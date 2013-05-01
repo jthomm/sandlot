@@ -490,7 +490,7 @@ class Pitch(object):
     def nasty(self):
         """Measures "nastiness" of the pitch based on the following:
 
-        Choice -- The less successful a batter is against similar pitches, 
+        History -- The less successful a batter is against similar pitches, 
         the greater the nastiness.
 
         Velocity -- The greater the pitch's velocity relative to that 
