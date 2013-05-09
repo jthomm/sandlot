@@ -1,0 +1,15 @@
+# application builds
+build/*
+dist/*
+MANIFEST
+
+# python garbage
+*.pyc
+*.pyo
+
+# OS X garbage
+.DS_Store
+profile
+
+# vi garbage
+*.swp
