@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 
 
-class BattedBalls(tuple):
+class BallsInPlay(tuple):
 
     def __new__(cls, root_element):
         lst = [BattedBall(child).as_dict for child in root_element]
@@ -10,7 +10,7 @@ class BattedBalls(tuple):
 
 
 
-class BattedBall(object):
+class BallInPlay(object):
 
     def __init__(self, element):
         self.element = element
