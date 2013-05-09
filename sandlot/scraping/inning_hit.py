@@ -6,7 +6,7 @@ class BallsInPlay(tuple):
 
     def __new__(cls, root_element):
         lst = [BallInPlay(child).as_dict for child in root_element]
-        return super(BattedBalls, cls).__new__(cls, lst)
+        return super(BallsInPlay, cls).__new__(cls, lst)
 
 
 
