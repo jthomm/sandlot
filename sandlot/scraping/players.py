@@ -16,15 +16,34 @@ class Game(object):
         return unicode(self.element.attrib['date'])
 
     @property
-    def teams(self):
-        return [Team(child).as_dict for child in self.element \
-                if child.tag == 'team']
+    def away(self):
+        team_element = [child for child in self.element \
+                        if child.tag == 'team' and \
+                           child.attrib['type'] == 'away'][0]
+        return Team(team_element).as_dict
+
+    @property
+    def home(self):
+        team_element = [child for child in self.element \
+                        if child.tag == 'team' and \
+                           child.attrib['type'] == 'home'][0]
+        return Team(team_element).as_dict
 
     @property
     def umpires(self):
         umpires_element = [child for child in self.element \
                            if child.tag == 'umpires'][0]
         return [Umpire(child).as_dict for child in umpires_element]
+
+    @property
+    def as_dict(self):
+        dct = OrderedDict()
+        dct['venue'] = self.venue
+        dct['date_string'] = self.date_string
+        dct['away'] = self.away
+        dct['home'] = self.home
+        dct['umpires'] = self.umpires
+        return dct
 
 
 
@@ -90,6 +109,7 @@ class Team(object):
         dct['full_name'] = self.full_name
         dct['players'] = self.players
         dct['coaches'] = self.coaches
+        return dct
 
 
 
@@ -124,7 +144,7 @@ class Player(object):
 
     @property
     def team_abbr(self):
-        return unicode(self.element.attrib['team_abbr'])
+        return unicode(self.element.attrib['team_abbrev'])
 
     @property
     def parent_team_id(self):
@@ -132,7 +152,7 @@ class Player(object):
 
     @property
     def parent_team_abbr(self):
-        return unicode(self.element.attrib['team_abbr']) 
+        return unicode(self.element.attrib['team_abbrev']) 
 
     @property
     def status(self):
@@ -202,7 +222,10 @@ class Player(object):
     def era(self):
         attrib = self.element.attrib
         if 'era' in attrib:
-            return float(attrib['era'])
+            try:
+                return float(attrib['era'])
+            except ValueError:
+                return None
         else:
             return None
 
@@ -262,7 +285,7 @@ class Coach(object):
     @property
     def as_dict(self):
         dct = OrderedDict()
-        dct['coach_id'] = self.player_id
+        dct['coach_id'] = self.coach_id
         dct['first_name'] = self.first_name
         dct['last_name'] = self.last_name
         dct['uniform_number'] = self.uniform_number
