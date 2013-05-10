@@ -2,15 +2,15 @@ from collections import OrderedDict
 
 
 
-class BallsInPlay(tuple):
+class BattedBalls(tuple):
 
     def __new__(cls, root_element):
-        lst = [BallInPlay(child).as_dict for child in root_element]
-        return super(BallsInPlay, cls).__new__(cls, lst)
+        lst = [BattedBall(child).as_dict for child in root_element]
+        return super(BattedBalls, cls).__new__(cls, lst)
 
 
 
-class BallInPlay(object):
+class BattedBall(object):
 
     def __init__(self, element):
         self.element = element
