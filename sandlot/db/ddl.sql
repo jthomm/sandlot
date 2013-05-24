@@ -1,7 +1,7 @@
 --[game]
 CREATE TABLE game (
     game_id    INTEGER PRIMARY KEY
-  , gameday_id TEXT
+  , gameday_id TEXT UNIQUE
   , venue_name TEXT --`venue`
   , date_str   TEXT --`date_string`
   , away_abbr  TEXT --`away`, `abbr`
@@ -36,7 +36,6 @@ CREATE TABLE at_bat (
   , pitcher_hnd TEXT    --`pitcher_hand`
   , inning_id   INTEGER
   , side        TEXT
-  , team_abbr   TEXT
   , FOREIGN KEY(inning_id) REFERENCES inning(inning_id)
 )
 ;
@@ -54,20 +53,7 @@ CREATE TABLE action (
   , outs_bef    INTEGER --`outs`
   , inning_id   INTEGER
   , side        TEXT
-  , team_abbr   TEXT
   , FOREIGN KEY(inning_id) REFERENCES inning(inning_id)
-)
-;
-
---[game > inning > at_bat > runner]
-CREATE TABLE runner (
-    runner_id   INTEGER PRIMARY KEY
-  , player_id   TEXT --`runner_id`
-  , start_base  TEXT --`start`
-  , end_base    TEXT --`end`
-  , event_type  TEXT --`event`
-  , at_bat_id   INTEGER
-  , FOREIGN KEY(at_bat_id) REFERENCES at_bat(at_bat_id)
 )
 ;
 
@@ -110,6 +96,19 @@ CREATE TABLE pitch (
   , FOREIGN KEY(at_bat_id) REFERENCES at_bat(at_bat_id)
 )
 ;
+
+--[game > inning > at_bat > runner]
+CREATE TABLE runner (
+    runner_id   INTEGER PRIMARY KEY
+  , player_id   TEXT --`runner_id`
+  , start_base  TEXT --`start`
+  , end_base    TEXT --`end`
+  , event_type  TEXT --`event`
+  , at_bat_id   INTEGER
+  , FOREIGN KEY(at_bat_id) REFERENCES at_bat(at_bat_id)
+)
+;
+
 
 /*
 --[game > game_umpire]
