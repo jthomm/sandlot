@@ -12,11 +12,14 @@ connection = lite.connect('foo.db')
 connection.row_factory = row_factory
 
 main_cursor = connection.cursor()
-main_cursor.executescript(open('./db/ddl.sql', 'rb').read())
+#main_cursor.executescript(open('./db/create_tables.sql', 'rb').read())
+
+main_cursor.execute('SELECT DISTINCT gameday_id FROM game')
+existing_gameday_ids = [row['gameday_id'] for row in main_cursor]
 
 
 
-from inserter import GameInserter, InningInserter, AtBatInserter, ActionInserter, PitchInserter, RunnerInserter
+from inserter import GameInserter, InningInserter, AtBatInserter, ActionInserter, PitchInserter, RunnerInserter, GameUmpireInserter, GamePlayerInserter, GameCoachInserter
 
 game_inserter = GameInserter(connection)
 inning_inserter = InningInserter(connection)
@@ -24,6 +27,9 @@ at_bat_inserter = AtBatInserter(connection)
 action_inserter = ActionInserter(connection)
 pitch_inserter = PitchInserter(connection)
 runner_inserter = RunnerInserter(connection)
+game_umpire_inserter = GameUmpireInserter(connection)
+game_player_inserter = GamePlayerInserter(connection)
+game_coach_inserter = GameCoachInserter(connection)
 
 
 
@@ -39,15 +45,24 @@ def get_innings(gameday_id):
     file_name = './xml/2013/%s-inning_all.xml.gz' % gameday_id
     return Innings(etree.fromstring(gzip.open(file_name, 'rb').read()))
 
-gameday_ids = ('gid_2013_05_20_phimlb_miamlb_1',
-               'gid_2013_05_15_clemlb_phimlb_1',)
+#gameday_ids = ('gid_2013_05_20_phimlb_miamlb_1',
+#               'gid_2013_05_15_clemlb_phimlb_1',)
 
-#gameday_ids = ('gid_2013_05_20_phimlb_miamlb_1',)
-
-for gameday_id in gameday_ids:
-    game = get_game(gameday_id)
-    innings = get_innings(gameday_id)
+def insert_game(gameday_id):
+    game, innings = get_game(gameday_id), get_innings(gameday_id)
     game_id = game_inserter.insert(gameday_id, game)
+    for umpire in game['umpires']:
+        game_umpire_id = game_umpire_inserter.insert(game_id, umpire)
+    for status in ('away', 'home',):
+        team = game[status]
+        for player in team['players']:
+            game_player_id = game_player_inserter.insert(game_id, player)
+        for coach in team['coaches']:
+            game_coach_id = game_coach_inserter.insert(
+                team['abbr'],
+                'A' if status == 'away' else 'H',
+                game_id,
+                coach)
     for inning in innings:
         inning_id = inning_inserter.insert(game_id, inning)
         for side in ('top', 'bottom',):
@@ -61,3 +76,13 @@ for gameday_id in gameday_ids:
                     runner_id = runner_inserter.insert(at_bat_id, runner)
             for action in inning[side]['actions']:
                 action_id = action_inserter.insert(inning_id, side, action)
+
+from sys import argv
+gameday_id = argv[1]
+print 'GameDay ID: {0}'.format(argv[1])
+if gameday_id in existing_gameday_ids:
+    print 'Already exists in the database; exiting...'
+else:
+    insert_game(gameday_id)
+    connection.commit()
+    print 'Committed...'

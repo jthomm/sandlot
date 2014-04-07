@@ -13,3 +13,6 @@ profile
 
 # vi garbage
 *.swp
+
+# virtualenv
+.env/*
