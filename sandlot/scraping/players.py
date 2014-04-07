@@ -276,7 +276,12 @@ class Coach(object):
 
     @property
     def uniform_number(self):
-        return int(self.element.attrib['num'])
+        try:
+            return int(self.element.attrib['num'])
+        except ValueError:
+            # Will return `ValueError` when coach is a "special assistant"
+            # and therefore has no uniform number.
+            return None
 
     @property
     def position(self):
