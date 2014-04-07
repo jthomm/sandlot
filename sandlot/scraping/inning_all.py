@@ -2,6 +2,16 @@ from collections import OrderedDict
 
 
 
+def except_key_error_none(old_f):
+    def new_f(*args, **kwargs):
+        try:
+            return old_f(*args, **kwargs)
+        except KeyError:
+            return None
+    return new_f
+
+
+
 class Innings(tuple):
 
     def __new__(cls, root_element):
@@ -303,16 +313,19 @@ class Pitch(object):
         return float(self.element.attrib['y'])
 
     @property
+    @except_key_error_none
     def start_speed(self):
         """Speed (mph) of the ball at the initial distance, `y0`."""
         return float(self.element.attrib['start_speed'])
 
     @property
+    @except_key_error_none
     def end_speed(self):
         """Speed (mph) of the ball as it crosses the front of home plate."""
         return float(self.element.attrib['end_speed'])
 
     @property
+    @except_key_error_none
     def sz_top(self):
         """Distance (ft) from the ground to the top of the batter's
         strike zone.  The PITCHf/x operator sets a line at the batter's
@@ -322,6 +335,7 @@ class Pitch(object):
         return float(self.element.attrib['sz_top'])
 
     @property
+    @except_key_error_none
     def sz_bot(self):
         """Distance (ft) from the ground to the bottom of the batter's
         strike zone.  The PITCHf/x operator sets a line at the hollow of 
@@ -330,6 +344,7 @@ class Pitch(object):
         return float(self.element.attrib['sz_bot'])
 
     @property
+    @except_key_error_none
     def pfx_x(self):
         """Horizontal movement (in) of the ball between `y0` and home plate 
         relative to a ball thrown at the same speed with no spin.  Measured 
@@ -338,6 +353,7 @@ class Pitch(object):
         return float(self.element.attrib['pfx_x'])
 
     @property
+    @except_key_error_none
     def pfx_z(self):
         """Vertical movement (in) of the ball between `y0` and home plate 
         relative to a ball thrown at the same speed with no spin.  Measured 
@@ -346,6 +362,7 @@ class Pitch(object):
         return float(self.element.attrib['pfx_z'])
 
     @property
+    @except_key_error_none
     def px(self):
         """Horizontal distance (ft) of the ball from the center of 
         home plate as it crosses the plate.  Negative values signify that 
@@ -355,12 +372,14 @@ class Pitch(object):
         return float(self.element.attrib['px'])
 
     @property
+    @except_key_error_none
     def pz(self):
         """Vertical distance (ft) of the ball from the surface of 
         home plate as it crosses the plate."""
         return float(self.element.attrib['pz'])
 
     @property
+    @except_key_error_none
     def x0(self):
         """Horizontal distance (ft) of the ball from the center of 
         home plate at the initial tracking location `y0`.
@@ -368,6 +387,7 @@ class Pitch(object):
         return float(self.element.attrib['x0'])
 
     @property
+    @except_key_error_none
     def y0(self):
         """Longitudinal distance (ft) of the ball from the front of 
         home plate relative to which the PITCHf/x system calibrates its 
@@ -377,6 +397,7 @@ class Pitch(object):
         return float(self.element.attrib['y0'])
 
     @property
+    @except_key_error_none
     def z0(self):
         """Vertical distance (ft) of the ball from the surface of 
         home plate at the initial tracking location `y0`.
@@ -384,6 +405,7 @@ class Pitch(object):
         return float(self.element.attrib['z0'])
 
     @property
+    @except_key_error_none
     def vx0(self):
         """Horizontal velocity (ft/second) of the ball at the initial 
         point `y0`.
@@ -391,6 +413,7 @@ class Pitch(object):
         return float(self.element.attrib['vx0'])
 
     @property
+    @except_key_error_none
     def vz0(self):
         """Vertical velocity (ft/second) of the ball at the initial 
         point `y0`.
@@ -398,6 +421,7 @@ class Pitch(object):
         return float(self.element.attrib['vz0'])
 
     @property
+    @except_key_error_none
     def vy0(self):
         """Longitudinal velocity (ft/second) of the ball at the initial 
         point `y0`.
@@ -405,6 +429,7 @@ class Pitch(object):
         return float(self.element.attrib['vy0'])
 
     @property
+    @except_key_error_none
     def ax(self):
         """Horizontal acceleration (ft/second^2) of the ball at the initial 
         point `y0`.
@@ -412,6 +437,7 @@ class Pitch(object):
         return float(self.element.attrib['ax'])
 
     @property
+    @except_key_error_none
     def ay(self):
         """Vertical acceleration (ft/second^2) of the ball at the initial 
         point `y0`.
@@ -419,6 +445,7 @@ class Pitch(object):
         return float(self.element.attrib['ay'])
 
     @property
+    @except_key_error_none
     def az(self):
         """Longitudinal acceleration (ft/second^2) of the ball at the initial 
         point `y0`.
@@ -426,6 +453,7 @@ class Pitch(object):
         return float(self.element.attrib['az'])
 
     @property
+    @except_key_error_none
     def spin_dir(self):
         """Angle between the `y` axis and the axis of rotation of the ball 
         with a sign such that 90 degrees corresponds to the spin pointing 
@@ -434,11 +462,13 @@ class Pitch(object):
         return float(self.element.attrib['spin_dir'])
 
     @property
+    @except_key_error_none
     def spin_rate(self):
         """Spin (rpm) of the ball."""
         return float(self.element.attrib['spin_rate'])
 
     @property
+    @except_key_error_none
     def break_y(self):
         """Longitudinal distance (ft) of the ball from the front of 
         home plate at the time of the ball's greatest deviation from the 
@@ -447,6 +477,7 @@ class Pitch(object):
         return float(self.element.attrib['break_y'])
 
     @property
+    @except_key_error_none
     def break_angle(self):
         """Angle (degrees) of the ball from "12 o'clock" at the time of 
         the ball's greatest deviation from the straight line path between 
@@ -455,6 +486,7 @@ class Pitch(object):
         return float(self.element.attrib['break_angle'])
 
     @property
+    @except_key_error_none
     def break_length(self):
         """Distance (in) of the ball from dead center at the time of 
         the ball's greatest deviation from the straight line path between 
@@ -463,6 +495,7 @@ class Pitch(object):
         return float(self.element.attrib['break_length'])
 
     @property
+    @except_key_error_none
     def pitch_type(self):
         """Probable pitch type according to a classification algorithm 
         developed by Ross Paul of MLBAM.  Values are as follows:
@@ -487,14 +520,17 @@ class Pitch(object):
         return unicode(self.element.attrib['pitch_type'])
 
     @property
+    @except_key_error_none
     def type_confidence(self):
         return float(self.element.attrib['type_confidence'])
 
     @property
+    @except_key_error_none
     def zone(self):
         return int(self.element.attrib['zone'])
 
     @property
+    @except_key_error_none
     def nasty(self):
         """Measures "nastiness" of the pitch based on the following:
 
@@ -518,6 +554,7 @@ class Pitch(object):
         return int(self.element.attrib['nasty'])
 
     @property
+    @except_key_error_none
     def sv_id(self):
         """Timestamp when the PITCHf/x tracking system first detects the 
         ball in the air.  Formatted `YYMMDD_hhmmss`.
