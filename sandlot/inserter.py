@@ -211,3 +211,100 @@ class RunnerInserter(Inserter):
               at_bat_id,)
         )
         return self.cursor.lastrowid
+
+
+
+class GameUmpireInserter(Inserter):
+
+    def insert(self, game_id, umpire):
+        self.cursor.execute('''
+        INSERT INTO game_umpire (
+            umpire_id
+          , full_name
+          , position
+          , game_id
+        ) VALUES (?, ?, ?, ?)
+        ''', (umpire['umpire_id'],
+              umpire['full_name'],
+              umpire['position'],
+              game_id,)
+        )
+        return self.cursor.lastrowid
+
+
+
+class GamePlayerInserter(Inserter):
+
+    def insert(self, game_id, player):
+        self.cursor.execute('''
+        INSERT INTO game_player (
+            player_id
+          , first_name
+          , last_name
+          , box_name
+          , handedness
+          , team_id
+          , team_abbr
+          , status
+          , uni_number
+          , position
+          , game_position
+          , curr_position
+          , batting_order
+          , avg
+          , rbi
+          , hr
+          , wins
+          , losses
+          , era
+          , game_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (player['player_id'],
+              player['first_name'],
+              player['last_name'],
+              player['box_name'],
+              player['handedness'],
+              player['team_id'],
+              player['team_abbr'],
+              player['status'],
+              player['uniform_number'],
+              player['position'],
+              player['game_position'],
+              player['current_position'],
+              player['batting_order'],
+              player['avg'],
+              player['rbi'],
+              player['hr'],
+              player['wins'],
+              player['losses'],
+              player['era'],
+              game_id,)
+        )
+        return self.cursor.lastrowid
+
+
+
+class GameCoachInserter(Inserter):
+
+    def insert(self, team_abbr, status, game_id, coach):
+        self.cursor.execute('''
+        INSERT INTO game_coach (
+            coach_id
+          , first_name
+          , last_name
+          , team_abbr
+          , status
+          , uni_number
+          , position
+          , game_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (coach['coach_id'],
+              coach['first_name'],
+              coach['last_name'],
+              team_abbr,
+              status,
+              coach['uniform_number'],
+              coach['position'],
+              game_id,)
+        )
+        return self.cursor.lastrowid

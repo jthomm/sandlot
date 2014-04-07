@@ -109,17 +109,55 @@ CREATE TABLE runner (
 )
 ;
 
-
-/*
 --[game > game_umpire]
 CREATE TABLE game_umpire (
     game_umpire_id INTEGER PRIMARY KEY
   , umpire_id      TEXT --`umpire_id`
   , full_name      TEXT --`full_name`
   , position       TEXT --`position`
+  , game_id        INTEGER
+  , FOREIGN KEY(game_id) REFERENCES game(game_id)
 )
+;
 
 --[game > game_player]
 CREATE TABLE game_player (
+    game_player_id INTEGER PRIMARY KEY
+  , player_id      TEXT --`player_id`
+  , first_name     TEXT --`first_name`
+  , last_name      TEXT --`last_name`
+  , box_name       TEXT --`box_name`
+  , handedness     TEXT --`handedness`
+  , team_id        TEXT --`team_id`
+  , team_abbr      TEXT --`team_abbr`
+  , status         TEXT --`status`
+  , uni_number     INTEGER --`uniform_number`
+  , position       TEXT --`position`
+  , game_position  TEXT --`game_position`
+  , curr_position  TEXT --`current_position`
+  , batting_order  INTEGER --`batting_order`
+  , avg            FLOAT --`avg`
+  , rbi            INTEGER --`rbi`
+  , hr             INTEGER --`hr`
+  , wins           INTEGER --`wins`
+  , losses         INTEGER --`losses`
+  , era            FLOAT --`era`
+  , game_id        INTEGER
+  , FOREIGN KEY(game_id) REFERENCES game(game_id)
 )
-*/
+;
+
+--[game > game_coach]
+CREATE TABLE game_coach (
+    game_coach_id INTEGER PRIMARY KEY
+  , coach_id   TEXT --`coach_id`
+  , first_name TEXT --`first_name`
+  , last_name  TEXT --`last_name`
+  , team_abbr  TEXT
+  , status     TEXT
+  , uni_number INTEGER --`uniform_number`
+  , position   TEXT --`position`
+  , game_id    INTEGER
+  , FOREIGN KEY(game_id) REFERENCES game(game_id)
+)
+;
