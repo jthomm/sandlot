@@ -1,21 +1,16 @@
-from __future__ import division
-import sqlite3 as lite
-from collections import OrderedDict
+import sqlite3
 
+DB_NAME = 'foo.db'
 
+connection = sqlite3.connect(DB_NAME)
 
-def row_factory(cursor, row):
-    return OrderedDict((column[0], row[i],) for i, column in \
-                        enumerate(cursor.description))
+cursor = connection.cursor()
+#cursor.executescript(open('./db/create_tables.sql', 'rb').read())
 
-connection = lite.connect('foo.db')
-connection.row_factory = row_factory
-
-main_cursor = connection.cursor()
-#main_cursor.executescript(open('./db/create_tables.sql', 'rb').read())
-
-main_cursor.execute('SELECT DISTINCT gameday_id FROM game')
+cursor.execute('SELECT DISTINCT gameday_id FROM game')
 existing_gameday_ids = [row['gameday_id'] for row in main_cursor]
+
+cursor.close()
 
 
 
@@ -44,9 +39,6 @@ def get_game(gameday_id):
 def get_innings(gameday_id):
     file_name = './xml/2013/%s-inning_all.xml.gz' % gameday_id
     return Innings(etree.fromstring(gzip.open(file_name, 'rb').read()))
-
-#gameday_ids = ('gid_2013_05_20_phimlb_miamlb_1',
-#               'gid_2013_05_15_clemlb_phimlb_1',)
 
 def insert_game(gameday_id):
     game, innings = get_game(gameday_id), get_innings(gameday_id)
@@ -77,12 +69,14 @@ def insert_game(gameday_id):
             for action in inning[side]['actions']:
                 action_id = action_inserter.insert(inning_id, side, action)
 
-from sys import argv
-gameday_id = argv[1]
-print 'GameDay ID: {0}'.format(argv[1])
-if gameday_id in existing_gameday_ids:
-    print 'Already exists in the database; exiting...'
-else:
-    insert_game(gameday_id)
-    connection.commit()
-    print 'Committed...'
+
+if __name__ == '__main__':
+    from sys import argv
+    gameday_id = argv[1]
+    print 'GameDay ID: {0}'.format(argv[1])
+    if gameday_id in existing_gameday_ids:
+        print 'Already exists in the database; exiting...'
+    else:
+        insert_game(gameday_id)
+        connection.commit()
+        print 'Committed...'
