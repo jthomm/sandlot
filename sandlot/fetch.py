@@ -65,16 +65,16 @@ class XMLResource(object):
 
 
 #from os import listdir
-#for date in sorted(list(set(f[4:14] for f in listdir('./xml/2011/')))): date
+#for date in sorted(list(set(f[4:14] for f in listdir('./xml/2013/')))): date
 
 import datetime
 
 one_day = datetime.timedelta(days=1)
 
-start = datetime.date(2011, 4, 15)
-end = datetime.date(2011, 6, 30)
+start = datetime.date(2013, 7, 21)
+until = datetime.date(2013, 9, 30)
 
-while start < end:
+while start < until:
     print start
     print '=================================================='
     game_day = GameDay(start)
@@ -83,14 +83,14 @@ while start < end:
         gr = GameResource(game_id, game_day)
         inning_all = XMLResource(gr.inning_all_url)
         try:
-            inning_all.save('./xml/2011/%s-inning_all.xml.gz' % game_id)
+            inning_all.save('./xml/2013/%s-inning_all.xml.gz' % game_id)
         except HTTPError:
             print 'WARNING:  No data for %s - skipping...\n' % game_id
             continue
         inning_hit = XMLResource(gr.inning_hit_url)
-        inning_hit.save('./xml/2011/%s-inning_hit.xml.gz' % game_id)
+        inning_hit.save('./xml/2013/%s-inning_hit.xml.gz' % game_id)
         players = XMLResource(gr.players_url)
-        players.save('./xml/2011/%s-players.xml.gz' % game_id)
+        players.save('./xml/2013/%s-players.xml.gz' % game_id)
         print 'Got it!\n'
     start += one_day
     print 'Sleeping...\n'
