@@ -8,7 +8,7 @@ cursor = connection.cursor()
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
 
 cursor.execute('SELECT DISTINCT gameday_id FROM game')
-existing_gameday_ids = [row['gameday_id'] for row in main_cursor]
+existing_gameday_ids = [row[0] for row in cursor]
 
 cursor.close()
 
@@ -70,13 +70,15 @@ def insert_game(gameday_id):
                 action_id = action_inserter.insert(inning_id, side, action)
 
 
+
 if __name__ == '__main__':
-    from sys import argv
-    gameday_id = argv[1]
-    print 'GameDay ID: {0}'.format(argv[1])
-    if gameday_id in existing_gameday_ids:
-        print 'Already exists in the database; exiting...'
-    else:
-        insert_game(gameday_id)
-        connection.commit()
-        print 'Committed...'
+    import fileinput
+    for line in fileinput.input():
+        gameday_id = line.rstrip()
+        print 'GameDay ID: {0}'.format(gameday_id)
+        if gameday_id in existing_gameday_ids:
+            print 'Already exists in the database; exiting...'
+        else:
+            insert_game(gameday_id)
+            connection.commit()
+            print 'Committed...'
