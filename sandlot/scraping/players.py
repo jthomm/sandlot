@@ -2,6 +2,16 @@ from collections import OrderedDict
 
 
 
+def except_value_error_none(old_f):
+    def new_f(*args, **kwargs):
+        try:
+            return old_f(*args, **kwargs)
+        except ValueError:
+            return None
+    return new_f
+
+
+
 class Game(object):
 
     def __init__(self, element):
@@ -159,6 +169,7 @@ class Player(object):
         return unicode(self.element.attrib['status'])
 
     @property
+    @except_value_error_none
     def uniform_number(self):
         return int(self.element.attrib['num'])
 
