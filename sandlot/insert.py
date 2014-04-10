@@ -33,11 +33,11 @@ from lxml import etree
 import gzip
 
 def get_game(gameday_id):
-    file_name = './xml/2013/%s-players.xml.gz' % gameday_id
+    file_name = './xml/2014/%s-players.xml.gz' % gameday_id
     return Game(etree.fromstring(gzip.open(file_name, 'rb').read())).as_dict
 
 def get_innings(gameday_id):
-    file_name = './xml/2013/%s-inning_all.xml.gz' % gameday_id
+    file_name = './xml/2014/%s-inning_all.xml.gz' % gameday_id
     return Innings(etree.fromstring(gzip.open(file_name, 'rb').read()))
 
 def insert_game(gameday_id):
