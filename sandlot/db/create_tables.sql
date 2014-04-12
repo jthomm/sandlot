@@ -1,3 +1,6 @@
+--enable foreign key support for the session
+PRAGMA foreign_keys = ON;
+
 --[game]
 CREATE TABLE game (
     game_id    INTEGER PRIMARY KEY
