@@ -1,10 +1,11 @@
 import sqlite3
 
-DB_NAME = 'foo.db'
+DB_NAME = 'bar.db'
 
 connection = sqlite3.connect(DB_NAME)
 
 cursor = connection.cursor()
+cursor.execute('PRAGMA foreign_keys = ON')
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
 
 cursor.execute('SELECT DISTINCT gameday_id FROM game')
