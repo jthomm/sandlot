@@ -8,6 +8,8 @@ connection = sqlite3.connect(DB_NAME)
 cursor = connection.cursor()
 cursor.execute('PRAGMA foreign_keys = ON')
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
+#create_view('starting_pitcher')
+#create_view('pitch_cat')
 
 cursor.execute('SELECT DISTINCT game_id FROM game')
 existing_game_ids = [row[0] for row in cursor]
@@ -75,12 +77,18 @@ def insert_game(game_id):
                     inning['number'],
                     inning_side, game_id, action)
 
-def refresh_view(view_name):
+def exec_view_sql(view_name, sql_file_name):
     view_root = path.join('./db/materialized_views', view_name)
     refresh_sql = ''
-    with open(path.join(view_root, 'refresh.sql'), 'rb') as refresh_file:
+    with open(path.join(view_root, sql_file_name), 'rb') as refresh_file:
         refresh_sql = refresh_file.read()
     cursor.executescript(refresh_sql)
+
+def create_view(view_name):
+    exec_view_sql(view_name, 'create_table.sql')
+
+def refresh_view(view_name):
+    exec_view_sql(view_name, 'refresh.sql')
 
 
 
