@@ -1,7 +1,7 @@
 import sqlite3
 from os import path, listdir
 
-DB_NAME = 'baz.db'
+DB_NAME = 'qux.db'
 
 connection = sqlite3.connect(DB_NAME)
 
