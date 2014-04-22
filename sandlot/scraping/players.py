@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from datetime import datetime
 
 
 
@@ -23,7 +24,9 @@ class Game(object):
 
     @property
     def date_string(self):
-        return unicode(self.element.attrib['date'])
+        #return unicode(self.element.attrib['date'])
+        dt = datetime.strptime(self.element.attrib['date'], '%B %d, %Y')
+        return unicode(dt.strftime('%Y-%m-%d'))
 
     @property
     def away(self):
