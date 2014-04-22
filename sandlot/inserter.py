@@ -10,10 +10,10 @@ class Inserter(object):
 
 class GameInserter(Inserter):
 
-    def insert(self, gameday_id, game):
+    def insert(self, game_id, game):
         self.cursor.execute('''
         INSERT INTO game (
-            gameday_id
+            game_id
           , venue_name
           , date_str
           , away_abbr
@@ -21,7 +21,7 @@ class GameInserter(Inserter):
           , home_abbr
           , home_full
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (gameday_id,
+        ''', (game_id,
               game['venue'],
               game['date_string'],
               game['away']['abbr'],
@@ -29,28 +29,14 @@ class GameInserter(Inserter):
               game['home']['abbr'],
               game['home']['full_name'],)
         )
-        return self.cursor.lastrowid
-
-
-
-class InningInserter(Inserter):
-
-    def insert(self, game_id, inning):
-        self.cursor.execute('''
-        INSERT INTO inning (
-            inning_num
-          , game_id
-        ) VALUES (?, ?)
-        ''', (inning['number'],
-              game_id,)
-        )
-        return self.cursor.lastrowid
+        #return self.cursor.lastrowid
+        return game_id
 
 
 
 class AtBatInserter(Inserter):
 
-    def insert(self, inning_id, side, at_bat):
+    def insert(self, inning_num, inning_side, game_id, at_bat): 
         self.cursor.execute('''
         INSERT INTO at_bat (
             description
@@ -64,9 +50,10 @@ class AtBatInserter(Inserter):
           , batter_stnd
           , pitcher_id
           , pitcher_hnd
-          , inning_id
-          , side
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          , inning_num
+          , inning_side
+          , game_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (at_bat['description'],
               at_bat['event'],
               at_bat['number'],
@@ -78,8 +65,9 @@ class AtBatInserter(Inserter):
               at_bat['batter_stance'],
               at_bat['pitcher_id'],
               at_bat['pitcher_hand'],
-              inning_id,
-              side,)
+              inning_num,
+              inning_side,
+              game_id,)
         )
         return self.cursor.lastrowid
 
@@ -87,7 +75,7 @@ class AtBatInserter(Inserter):
 
 class ActionInserter(Inserter):
 
-    def insert(self, inning_id, side, action):
+    def insert(self, inning_num, inning_side, game_id, action):
         self.cursor.execute('''
         INSERT INTO action (
             description
@@ -98,9 +86,10 @@ class ActionInserter(Inserter):
           , balls_bef
           , strikes_bef
           , outs_bef
-          , inning_id
-          , side
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          , inning_num
+          , inning_side
+          , game_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (action['description'],
               action['event'],
               action['player_id'],
@@ -109,8 +98,9 @@ class ActionInserter(Inserter):
               action['balls'],
               action['strikes'],
               action['outs'],
-              inning_id,
-              side,)
+              inning_num,
+              inning_side,
+              game_id,)
         )
         return self.cursor.lastrowid
 
