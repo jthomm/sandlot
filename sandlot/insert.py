@@ -1,6 +1,7 @@
 import sqlite3
+from os import path, listdir
 
-DB_NAME = 'bar.db'
+DB_NAME = 'baz.db'
 
 connection = sqlite3.connect(DB_NAME)
 
@@ -8,17 +9,14 @@ cursor = connection.cursor()
 cursor.execute('PRAGMA foreign_keys = ON')
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
 
-cursor.execute('SELECT DISTINCT gameday_id FROM game')
-existing_gameday_ids = [row[0] for row in cursor]
-
-cursor.close()
+cursor.execute('SELECT DISTINCT game_id FROM game')
+existing_game_ids = [row[0] for row in cursor]
 
 
 
-from inserter import GameInserter, InningInserter, AtBatInserter, ActionInserter, PitchInserter, RunnerInserter, GameUmpireInserter, GamePlayerInserter, GameCoachInserter
+from inserter import GameInserter, AtBatInserter, ActionInserter, PitchInserter, RunnerInserter, GameUmpireInserter, GamePlayerInserter, GameCoachInserter
 
 game_inserter = GameInserter(connection)
-inning_inserter = InningInserter(connection)
 at_bat_inserter = AtBatInserter(connection)
 action_inserter = ActionInserter(connection)
 pitch_inserter = PitchInserter(connection)
@@ -33,23 +31,27 @@ from scraping import Game, Innings
 from lxml import etree
 import gzip
 
-def get_game(gameday_id):
-    file_name = './xml/2014/%s-players.xml.gz' % gameday_id
+def get_game(game_id):
+    file_name = './xml/{0}/{1}-players.xml.gz'.format(game_id[4:8], game_id)
     return Game(etree.fromstring(gzip.open(file_name, 'rb').read())).as_dict
 
-def get_innings(gameday_id):
-    file_name = './xml/2014/%s-inning_all.xml.gz' % gameday_id
+def get_innings(game_id):
+    file_name = './xml/{0}/{1}-inning_all.xml.gz'.format(game_id[4:8], game_id)
     return Innings(etree.fromstring(gzip.open(file_name, 'rb').read()))
 
-def insert_game(gameday_id):
-    game, innings = get_game(gameday_id), get_innings(gameday_id)
-    game_id = game_inserter.insert(gameday_id, game)
+def insert_game(game_id):
+    game, innings = get_game(game_id), get_innings(game_id)
+    game_id = game_inserter.insert(game_id, game)
     for umpire in game['umpires']:
         game_umpire_id = game_umpire_inserter.insert(game_id, umpire)
     for status in ('away', 'home',):
         team = game[status]
         for player in team['players']:
-            game_player_id = game_player_inserter.insert(game_id, player)
+            try:
+                game_player_id = game_player_inserter.insert(game_id, player)
+            except:
+                print player
+                raise
         for coach in team['coaches']:
             game_coach_id = game_coach_inserter.insert(
                 team['abbr'],
@@ -57,29 +59,44 @@ def insert_game(gameday_id):
                 game_id,
                 coach)
     for inning in innings:
-        inning_id = inning_inserter.insert(game_id, inning)
-        for side in ('top', 'bottom',):
-            if inning[side] is None:
+        for inning_side in ('top', 'bottom',):
+            if inning[inning_side] is None:
                 continue
-            for at_bat in inning[side]['at_bats']:
-                at_bat_id = at_bat_inserter.insert(inning_id, side, at_bat)
+            for at_bat in inning[inning_side]['at_bats']:
+                at_bat_id = at_bat_inserter.insert(
+                    inning['number'],
+                    inning_side, game_id, at_bat)
                 for pitch in at_bat['pitches']:
                     pitch_id = pitch_inserter.insert(at_bat_id, pitch)
                 for runner in at_bat['runners']:
                     runner_id = runner_inserter.insert(at_bat_id, runner)
-            for action in inning[side]['actions']:
-                action_id = action_inserter.insert(inning_id, side, action)
+            for action in inning[inning_side]['actions']:
+                action_id = action_inserter.insert(
+                    inning['number'],
+                    inning_side, game_id, action)
+
+def refresh_view(view_name):
+    view_root = path.join('./db/materialized_views', view_name)
+    refresh_sql = ''
+    with open(path.join(view_root, 'refresh.sql'), 'rb') as refresh_file:
+        refresh_sql = refresh_file.read()
+    cursor.executescript(refresh_sql)
 
 
 
 if __name__ == '__main__':
     import fileinput
     for line in fileinput.input():
-        gameday_id = line.rstrip()
-        print 'GameDay ID: {0}'.format(gameday_id)
-        if gameday_id in existing_gameday_ids:
+        game_id = line.rstrip()
+        print 'GameDay ID: {0}'.format(game_id)
+        if game_id in existing_game_ids:
             print 'Already exists in the database; exiting...'
         else:
-            insert_game(gameday_id)
+            insert_game(game_id)
             connection.commit()
             print 'Committed...'
+    for view_name in listdir('./db/materialized_views'):
+        print 'Refreshing view: {0}'.format(view_name)
+        refresh_view(view_name)
+        connection.commit()
+        print 'Committed...'
