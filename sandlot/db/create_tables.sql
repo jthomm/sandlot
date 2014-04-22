@@ -3,8 +3,7 @@ PRAGMA foreign_keys = ON;
 
 --[game]
 CREATE TABLE game (
-    game_id    INTEGER PRIMARY KEY
-  , gameday_id TEXT UNIQUE
+    game_id    TEXT PRIMARY KEY
   , venue_name TEXT --`venue`
   , date_str   TEXT --`date_string`
   , away_abbr  TEXT --`away`, `abbr`
@@ -14,16 +13,7 @@ CREATE TABLE game (
 )
 ;
 
---[game > inning]
-CREATE TABLE inning (
-    inning_id  INTEGER PRIMARY KEY
-  , inning_num INTEGER --`number`
-  , game_id    INTEGER
-  , FOREIGN KEY(game_id) REFERENCES game(game_id)
-)
-;
-
---[game > inning > at_bat]
+--[game > at_bat]
 CREATE TABLE at_bat (
     at_bat_id   INTEGER PRIMARY KEY
   , description TEXT    --`description`
@@ -37,13 +27,16 @@ CREATE TABLE at_bat (
   , batter_stnd TEXT    --`batter_stance`
   , pitcher_id  TEXT    --`pitcher_id`
   , pitcher_hnd TEXT    --`pitcher_hand`
-  , inning_id   INTEGER
-  , side        TEXT
-  , FOREIGN KEY(inning_id) REFERENCES inning(inning_id)
+  , inning_num  INTEGER
+  , inning_side TEXT
+  , game_id     TEXT
+  , FOREIGN KEY (batter_id, game_id) REFERENCES game_player (player_id, game_id)
+  , FOREIGN KEY (pitcher_id, game_id) REFERENCES game_player (player_id, game_id)
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
 )
 ;
 
---[game > inning > action]
+--[game > action]
 CREATE TABLE action (
     action_id   INTEGER PRIMARY KEY
   , description TEXT    --`description`
@@ -54,13 +47,14 @@ CREATE TABLE action (
   , balls_bef   INTEGER --`balls`
   , strikes_bef INTEGER --`strikes`
   , outs_bef    INTEGER --`outs`
-  , inning_id   INTEGER
-  , side        TEXT
-  , FOREIGN KEY(inning_id) REFERENCES inning(inning_id)
+  , inning_num  INTEGER
+  , inning_side TEXT
+  , game_id     TEXT
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
 )
 ;
 
---[game > inning > at_bat > pitch]
+--[game > at_bat > pitch]
 CREATE TABLE pitch (
     pitch_id     INTEGER PRIMARY KEY
   , description  TEXT    --`description`
@@ -96,11 +90,11 @@ CREATE TABLE pitch (
   , break_angle  FLOAT   --`break_angle`
   , break_mag    FLOAT   --`break_length`
   , at_bat_id    INTEGER
-  , FOREIGN KEY(at_bat_id) REFERENCES at_bat(at_bat_id)
+  , FOREIGN KEY (at_bat_id) REFERENCES at_bat (at_bat_id)
 )
 ;
 
---[game > inning > at_bat > runner]
+--[game > at_bat > runner]
 CREATE TABLE runner (
     runner_id   INTEGER PRIMARY KEY
   , player_id   TEXT --`runner_id`
@@ -108,25 +102,24 @@ CREATE TABLE runner (
   , end_base    TEXT --`end`
   , event_type  TEXT --`event`
   , at_bat_id   INTEGER
-  , FOREIGN KEY(at_bat_id) REFERENCES at_bat(at_bat_id)
+  , FOREIGN KEY (at_bat_id) REFERENCES at_bat (at_bat_id)
 )
 ;
 
 --[game > game_umpire]
 CREATE TABLE game_umpire (
-    game_umpire_id INTEGER PRIMARY KEY
-  , umpire_id      TEXT --`umpire_id`
+    umpire_id      TEXT --`umpire_id`
   , full_name      TEXT --`full_name`
   , position       TEXT --`position`
   , game_id        INTEGER
-  , FOREIGN KEY(game_id) REFERENCES game(game_id)
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
+  , PRIMARY KEY (umpire_id, game_id)
 )
 ;
 
 --[game > game_player]
 CREATE TABLE game_player (
-    game_player_id INTEGER PRIMARY KEY
-  , player_id      TEXT --`player_id`
+    player_id      TEXT --`player_id`
   , first_name     TEXT --`first_name`
   , last_name      TEXT --`last_name`
   , box_name       TEXT --`box_name`
@@ -145,22 +138,23 @@ CREATE TABLE game_player (
   , wins           INTEGER --`wins`
   , losses         INTEGER --`losses`
   , era            FLOAT --`era`
-  , game_id        INTEGER
-  , FOREIGN KEY(game_id) REFERENCES game(game_id)
+  , game_id        TEXT
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
+  , PRIMARY KEY (player_id, game_id)
 )
 ;
 
 --[game > game_coach]
 CREATE TABLE game_coach (
-    game_coach_id INTEGER PRIMARY KEY
-  , coach_id   TEXT --`coach_id`
+    coach_id   TEXT --`coach_id`
   , first_name TEXT --`first_name`
   , last_name  TEXT --`last_name`
   , team_abbr  TEXT
   , status     TEXT
   , uni_number INTEGER --`uniform_number`
   , position   TEXT --`position`
-  , game_id    INTEGER
-  , FOREIGN KEY(game_id) REFERENCES game(game_id)
+  , game_id    TEXT
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
+  , PRIMARY KEY (coach_id, game_id)
 )
 ;
