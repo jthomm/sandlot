@@ -19,3 +19,6 @@ profile
 
 # databases
 *.db
+
+# notes
+*.txt

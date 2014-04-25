@@ -15,7 +15,7 @@
 ;
 
   DELETE
-    FROM starter
+    FROM starting_pitcher
    WHERE game_id = ?
 ;
 

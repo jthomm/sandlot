@@ -3,6 +3,14 @@ from datetime import datetime
 
 
 
+def except_key_error_none(old_f):
+    def new_f(*args, **kwargs):
+        try:
+            return old_f(*args, **kwargs)
+        except KeyError:
+            return None
+    return new_f
+
 def except_value_error_none(old_f):
     def new_f(*args, **kwargs):
         try:
@@ -152,20 +160,24 @@ class Player(object):
         return unicode(self.element.attrib['rl'])
 
     @property
+    @except_key_error_none
     def team_id(self):
         return unicode(self.element.attrib['team_id'])
 
     @property
+    @except_key_error_none
     def team_abbr(self):
         return unicode(self.element.attrib['team_abbrev'])
 
     @property
+    @except_key_error_none
     def parent_team_id(self):
-        return unicode(self.element.attrib['team_id'])
+        return unicode(self.element.attrib['parent_team_id'])
 
     @property
+    @except_key_error_none
     def parent_team_abbr(self):
-        return unicode(self.element.attrib['team_abbrev']) 
+        return unicode(self.element.attrib['parent_team_abbrev']) 
 
     @property
     def status(self):
