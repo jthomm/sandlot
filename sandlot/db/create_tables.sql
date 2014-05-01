@@ -64,6 +64,8 @@ CREATE TABLE pitch (
   , pitch_type   TEXT    --`pitch_type`
   , confidence   FLOAT   --`type_confidence`
   , zone_num     INTEGER --`zone`
+  , sz_top       INTEGER --`sz_top`
+  , sz_bot       INTEGER --`sz_bot`
   , nastiness    INTEGER --`nasty`
   , result_code  TEXT    --`result`
   , gd_end_x     FLOAT   --`x`

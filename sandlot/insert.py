@@ -7,6 +7,8 @@ connection = sqlite3.connect(DB_NAME)
 
 cursor = connection.cursor()
 cursor.execute('PRAGMA foreign_keys = ON')
+cursor.execute('PRAGMA journal_mode = OFF')
+cursor.execute('PRAGMA synchronous = OFF')
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
 #create_view('starting_pitcher')
 #create_view('pitch_cat')

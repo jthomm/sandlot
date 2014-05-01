@@ -118,6 +118,8 @@ class PitchInserter(Inserter):
           , pitch_type
           , confidence
           , zone_num
+          , sz_top
+          , sz_bot
           , nastiness
           , result_code
           , gd_end_x
@@ -144,7 +146,7 @@ class PitchInserter(Inserter):
           , break_angle
           , break_mag
           , at_bat_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (pitch['description'],
               pitch['cc'],
               pitch['pitch_id'],
@@ -152,6 +154,8 @@ class PitchInserter(Inserter):
               pitch['pitch_type'],
               pitch['type_confidence'],
               pitch['zone'],
+              pitch['sz_top'],
+              pitch['sz_bot'],
               pitch['nasty'],
               pitch['result'],
               pitch['x'],
