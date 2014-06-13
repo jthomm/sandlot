@@ -1,3 +1,6 @@
+--enable foreign key support for the session
+PRAGMA foreign_keys = ON;
+
   DELETE
     FROM pitch
    WHERE EXISTS (SELECT NULL

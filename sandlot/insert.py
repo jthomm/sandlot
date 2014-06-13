@@ -81,10 +81,10 @@ def insert_game(game_id):
 
 def exec_view_sql(view_name, sql_file_name):
     view_root = path.join('./db/materialized_views', view_name)
-    refresh_sql = ''
-    with open(path.join(view_root, sql_file_name), 'rb') as refresh_file:
-        refresh_sql = refresh_file.read()
-    cursor.executescript(refresh_sql)
+    view_sql = ''
+    with open(path.join(view_root, sql_file_name), 'rb') as sql_file:
+        view_sql = sql_file.read()
+    cursor.executescript(view_sql)
 
 def create_view(view_name):
     exec_view_sql(view_name, 'create_table.sql')
