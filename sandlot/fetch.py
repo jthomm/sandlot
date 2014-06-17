@@ -71,8 +71,8 @@ import datetime
 
 one_day = datetime.timedelta(days=1)
 
-start = datetime.date(2014, 6, 12) # delete yankees-mariners game (top 5th)
-until = datetime.date(2014, 6, 13)
+start = datetime.date(2014, 6, 12) # del TEX@OAK, SD@SEA, COL@LAD from 6/16
+until = datetime.date(2014, 6, 17)
 
 while start < until:
     print start
