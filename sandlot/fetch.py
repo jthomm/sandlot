@@ -71,8 +71,8 @@ import datetime
 
 one_day = datetime.timedelta(days=1)
 
-start = datetime.date(2014, 6, 19)
-until = datetime.date(2014, 6, 20) # delete CHA@MIN, BOS@OAK
+start = datetime.date(2014, 7, 7)
+until = datetime.date(2014, 7, 10)
 
 while start < until:
     print start
