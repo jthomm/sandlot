@@ -106,6 +106,39 @@ class ActionInserter(Inserter):
 
 
 
+class BattedBallInserter(Inserter):
+
+    def insert(self, game_id, batted_ball):
+        self.cursor.execute('''
+        INSERT INTO batted_ball (
+            description
+          , x
+          , y
+          , r
+          , theta
+          , batter_id
+          , pitcher_id
+          , result
+          , team
+          , inning_num
+          , game_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (batted_ball['description'],
+              batted_ball['x'],
+              batted_ball['y'],
+              batted_ball['r'],
+              batted_ball['theta'],
+              batted_ball['batter_id'],
+              batted_ball['pitcher_id'],
+              batted_ball['result'],
+              batted_ball['team'],
+              batted_ball['inning'],
+              game_id,)
+        )
+        return self.cursor.lastrowid
+
+
+
 class PitchInserter(Inserter):
 
     def insert(self, at_bat_id, pitch):

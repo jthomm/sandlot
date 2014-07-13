@@ -1,4 +1,11 @@
 from collections import OrderedDict
+from math import sqrt, atan2, pi
+
+
+
+ORIGIN_X = 125.163
+ORIGIN_Y = 204.337
+DISTANCE = 2.29
 
 
 
@@ -28,6 +35,14 @@ class BattedBall(object):
         return float(self.element.attrib['y'])
 
     @property
+    def r(self):
+        return DISTANCE*sqrt((ORIGIN_X - self.x)**2 + (ORIGIN_Y - self.y)**2)
+
+    @property
+    def theta(self):
+        return atan2(ORIGIN_Y - self.y, ORIGIN_X - self.x)*180/pi
+
+    @property
     def batter_id(self):
         return unicode(self.element.attrib['batter'])
 
@@ -53,6 +68,8 @@ class BattedBall(object):
         dct['description'] = self.description
         dct['x'] = self.x
         dct['y'] = self.y
+        dct['r'] = self.r
+        dct['theta'] = self.theta
         dct['batter_id'] = self.batter_id
         dct['pitcher_id'] = self.pitcher_id
         dct['result'] = self.result

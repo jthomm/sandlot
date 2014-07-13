@@ -54,6 +54,26 @@ CREATE TABLE action (
 )
 ;
 
+--[game > batted_ball]
+CREATE TABLE batted_ball (
+    batted_ball_id INTEGER PRIMARY KEY
+  , description    TEXT  --`description`
+  , x              FLOAT --`x`
+  , y              FLOAT --`y`
+  , r              FLOAT --`r`
+  , theta          FLOAT --`theta`
+  , batter_id      TEXT  --`batter_id`
+  , pitcher_id     TEXT  --`pitcher_id`
+  , result         TEXT  --`result`
+  , team           TEXT  --`team`
+  , inning_num     TEXT  --`inning`
+  , game_id        TEXT
+  , FOREIGN KEY (batter_id, game_id) REFERENCES game_player (player_id, game_id)
+  , FOREIGN KEY (pitcher_id, game_id) REFERENCES game_player (player_id, game_id)
+  , FOREIGN KEY (game_id) REFERENCES game (game_id)
+)
+;
+
 --[game > at_bat > pitch]
 CREATE TABLE pitch (
     pitch_id     INTEGER PRIMARY KEY

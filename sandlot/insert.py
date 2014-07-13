@@ -31,7 +31,7 @@ game_coach_inserter = GameCoachInserter(connection)
 
 
 
-from scraping import Game, Innings
+from scraping import Game, Innings, BattedBalls
 from lxml import etree
 import gzip
 
@@ -43,7 +43,16 @@ def get_innings(game_id):
     file_name = './xml/{0}/{1}-inning_all.xml.gz'.format(game_id[4:8], game_id)
     return Innings(etree.fromstring(gzip.open(file_name, 'rb').read()))
 
+def get_batted_balls(game_id):
+    file_name = './xml/{0}/{1}-inning_hit.xml.gz'.format(game_id[4:8], game_id)
+    return BattedBalls(etree.fromstring(gzip.open(file_name, 'rb').read()))
+
 def insert_game(game_id):
+    batted_balls = get_batted_balls(game_id)
+    for ball in batted_balls:
+        batted_ball_id = batted_ball_inserter.insert(game_id, batted_ball)
+
+def _insert_game(game_id):
     game, innings = get_game(game_id), get_innings(game_id)
     game_id = game_inserter.insert(game_id, game)
     for umpire in game['umpires']:
