@@ -18,11 +18,12 @@ existing_game_ids = [row[0] for row in cursor]
 
 
 
-from inserter import GameInserter, AtBatInserter, ActionInserter, PitchInserter, RunnerInserter, GameUmpireInserter, GamePlayerInserter, GameCoachInserter
+from inserter import GameInserter, AtBatInserter, ActionInserter, BattedBallInserter, PitchInserter, RunnerInserter, GameUmpireInserter, GamePlayerInserter, GameCoachInserter
 
 game_inserter = GameInserter(connection)
 at_bat_inserter = AtBatInserter(connection)
 action_inserter = ActionInserter(connection)
+batted_ball_inserter = BattedBallInserter(connection)
 pitch_inserter = PitchInserter(connection)
 runner_inserter = RunnerInserter(connection)
 game_umpire_inserter = GameUmpireInserter(connection)
@@ -49,7 +50,7 @@ def get_batted_balls(game_id):
 
 def insert_game(game_id):
     batted_balls = get_batted_balls(game_id)
-    for ball in batted_balls:
+    for batted_ball in batted_balls:
         batted_ball_id = batted_ball_inserter.insert(game_id, batted_ball)
 
 def _insert_game(game_id):
@@ -108,14 +109,14 @@ if __name__ == '__main__':
     for line in fileinput.input():
         game_id = line.rstrip()
         print 'GameDay ID: {0}'.format(game_id)
-        if game_id in existing_game_ids:
+        if 1 == 2: #game_id in existing_game_ids:
             print 'Already exists in the database; exiting...'
         else:
             insert_game(game_id)
             connection.commit()
             print 'Committed...'
-    for view_name in listdir('./db/materialized_views'):
-        print 'Refreshing view: {0}'.format(view_name)
-        refresh_view(view_name)
-        connection.commit()
-        print 'Committed...'
+    #for view_name in listdir('./db/materialized_views'):
+    #    print 'Refreshing view: {0}'.format(view_name)
+    #    refresh_view(view_name)
+    #    connection.commit()
+    #    print 'Committed...'

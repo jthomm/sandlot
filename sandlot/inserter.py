@@ -122,7 +122,7 @@ class BattedBallInserter(Inserter):
           , team
           , inning_num
           , game_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (batted_ball['description'],
               batted_ball['x'],
               batted_ball['y'],

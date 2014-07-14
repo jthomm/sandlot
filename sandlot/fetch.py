@@ -71,8 +71,8 @@ import datetime
 
 one_day = datetime.timedelta(days=1)
 
-start = datetime.date(2014, 7, 11)
-until = datetime.date(2014, 7, 12)
+start = datetime.date(2014, 7, 12)
+until = datetime.date(2014, 7, 14)
 
 while start < until:
     print start
