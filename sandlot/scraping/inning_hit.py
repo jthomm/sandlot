@@ -36,11 +36,11 @@ class BattedBall(object):
 
     @property
     def r(self):
-        return DISTANCE*sqrt((ORIGIN_X - self.x)**2 + (ORIGIN_Y - self.y)**2)
+        return DISTANCE*sqrt((self.x - ORIGIN_X)**2 + (ORIGIN_Y - self.y)**2)
 
     @property
     def theta(self):
-        return atan2(ORIGIN_Y - self.y, ORIGIN_X - self.x)*180/pi
+        return atan2(ORIGIN_Y - self.y, self.x - ORIGIN_X)*180/pi
 
     @property
     def batter_id(self):
