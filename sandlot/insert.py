@@ -13,8 +13,8 @@ cursor.execute('PRAGMA synchronous = OFF')
 #create_view('starting_pitcher')
 #create_view('pitch_cat')
 
-cursor.execute('SELECT DISTINCT game_id FROM batted_ball')
-#cursor.execute('SELECT DISTINCT game_id FROM game')
+#cursor.execute('SELECT DISTINCT game_id FROM batted_ball')
+cursor.execute('SELECT DISTINCT game_id FROM game')
 existing_game_ids = [row[0] for row in cursor]
 
 
@@ -157,12 +157,12 @@ if __name__ == '__main__':
         if game_id in existing_game_ids:
             print 'Already exists in the database; exiting...'
         else:
-            #insert_game(game_id)
-            _insert_batted_balls(game_id)
+            insert_game(game_id)
+            #_insert_batted_balls(game_id)
             connection.commit()
             print 'Committed...'
-    #for view_name in listdir('./db/materialized_views'):
-    #    print 'Refreshing view: {0}'.format(view_name)
-    #    refresh_view(view_name)
-    #    connection.commit()
-    #    print 'Committed...'
+    for view_name in listdir('./db/materialized_views'):
+        print 'Refreshing view: {0}'.format(view_name)
+        refresh_view(view_name)
+        connection.commit()
+        print 'Committed...'
