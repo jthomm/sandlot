@@ -64,41 +64,63 @@ class XMLResource(object):
 
 
 
-from os import popen
-import datetime
-
-one_day = datetime.timedelta(days=1)
-
-latest = popen("ls xml/* | awk -F'_' '{ print $2$3$4 }' | tail -1").read().strip()
-
-start = datetime.datetime.strptime(latest, '%Y%m%d').date() + one_day
-until = datetime.date.today() - datetime.timedelta(hours=26)
-
-#start = datetime.date(2014, 7, 23)
-#until = datetime.date(2014, 7, 24)
-
-while start < until:
-    print start
-    print '=================================================='
-    game_day = GameDay(start)
-    data_dir = './xml/{0}'.format(start.year)
+def fetch_one_date(date):
+    game_day = GameDay(date)
+    data_dir = './xml/{0}'.format(date.year)
     for game_id in game_day.game_ids:
         print 'Fetching data for %s' % game_id
         gr = GameResource(game_id, game_day)
         inning_all = XMLResource(gr.inning_all_url)
         try:
             inning_all.save('{0}/{1}-inning_all.xml.gz'.format(data_dir, game_id))
-            #inning_all.save('./xml/2014/%s-inning_all.xml.gz' % game_id)
         except HTTPError:
             print 'WARNING:  No data for %s - skipping...\n' % game_id
             continue
         inning_hit = XMLResource(gr.inning_hit_url)
         inning_hit.save('{0}/{1}-inning_hit.xml.gz'.format(data_dir, game_id))
-        #inning_hit.save('./xml/2014/%s-inning_hit.xml.gz' % game_id)
         players = XMLResource(gr.players_url)
         players.save('{0}/{1}-players.xml.gz'.format(data_dir, game_id))
-        #players.save('./xml/2014/%s-players.xml.gz' % game_id)
         print 'Got it!\n'
-    start += one_day
-    print 'Sleeping...\n'
-    sleep(10)
+
+
+
+import datetime
+
+one_day = datetime.timedelta(days=1)
+
+def fetch_multiple_dates(start, until):
+    while start < until:
+        print start
+        print '=================================================='
+        fetch_one_date(start)
+        start += one_day
+        print 'Sleeping...\n'
+        sleep(10)
+
+
+
+from argparse import ArgumentParser
+
+argument_parser = ArgumentParser()
+argument_parser.add_argument('-s')
+argument_parser.add_argument('-u')
+
+
+
+from os import popen
+
+latest = popen("ls xml/* | awk -F'_' '{ print $2$3$4 }' | tail -1").read().strip()
+
+default_start = datetime.datetime.strptime(latest, '%Y%m%d').date() + one_day
+default_until = datetime.date.today() - datetime.timedelta(hours=26)
+
+
+
+if __name__ == '__main__':
+    args = argument_parser.parse_args()
+    start = default_start if args.s is None \
+            else datetime.datetime.strptime(args.s, '%Y%m%d').date()
+    until = default_until if args.u is None \
+            else datetime.datetime.strptime(args.u, '%Y%m%d').date()
+    print '{0} until {1}\n'.format(start, until)
+    fetch_multiple_dates(start, until)
