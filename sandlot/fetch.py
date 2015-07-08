@@ -109,7 +109,7 @@ argument_parser.add_argument('-u')
 
 from os import popen
 
-latest = popen("ls xml/* | awk -F'_' '{ print $2$3$4 }' | tail -1").read().strip()
+latest = popen("ls xml/* | awk -F'_' '{ print $2$3$4 }' | grep '\d' | tail -1").read().strip()
 
 default_start = datetime.datetime.strptime(latest, '%Y%m%d').date() + one_day
 default_until = datetime.date.today() - datetime.timedelta(hours=26)

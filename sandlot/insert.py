@@ -10,6 +10,7 @@ cursor.execute('PRAGMA foreign_keys = ON')
 cursor.execute('PRAGMA journal_mode = OFF')
 cursor.execute('PRAGMA synchronous = OFF')
 #cursor.executescript(open('./db/create_tables.sql', 'rb').read())
+#cursor.executescript(open('./db/create_views.sql', 'rb').read())
 #create_view('starting_pitcher')
 #create_view('pitch_cat')
 
